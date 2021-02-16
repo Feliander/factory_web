@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+
+    <div class="bg-purple rounded box-shadow">
+        <div class="text-center">
+            <h6 class="countdown-title">Working hours</h6>
+            <div id="countdown" class="countdown">
+                <div class="countdown-number">
+                    <span class="hours countdown-time"></span>
+                    <span class="countdown-text">Hours</span>
+                </div>
+                <div class="countdown-number">
+                    <span class="minutes countdown-time"></span>
+                    <span class="countdown-text">Minutes</span>
+                </div>
+                <div class="countdown-number">
+                    <span class="seconds countdown-time"></span>
+                    <span class="countdown-text">Seconds</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="my-3 p-3 bg-white rounded box-shadow">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm">
+                    <form action="{% url 'home_page_url' %}" method="post">
+                        {% csrf_token %}
+                        <button id="start" type="submit" class="btn btn-success btn-block">Начало смены</button>
+                    </form>
+                </div>
+                <div class="col-sm">
+                    <button id="stop" type="button" class="btn btn-danger btn-block">Конец смены</button>
+                </div>
+                <div class="col-sm"></div>
+                <div class="col-sm"></div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-sm">
+                    <a class="btn btn-info btn-block" href="#" role="button">Плановый перерыв</a>
+                </div>
+                <div class="col-sm">
+                    <a id="test" class="btn btn-info btn-block" href="#" role="button">Test</a>
+                </div>
+                <div class="col-sm">
+                    <a class="btn btn-info btn-block" href="#" role="button">Автономное обслуживание</a>
+                </div>
+                <div class="col-sm">
+                    <a class="btn btn-info btn-block" href="#" role="button">ППР</a>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-sm">
+                    <a class="btn btn-info btn-block" href="#" role="button">Поломка оборудования</a>
+                </div>
+                <div class="col-sm">
+                    <a class="btn btn-info btn-block" href="#" role="button">Отсутствие материалов</a>
+                </div>
+                <div class="col-sm">
+                    <a class="btn btn-info btn-block" href="#" role="button">Отсутствие задания</a>
+                </div>
+                <div class="col-sm">
+                    <a class="btn btn-info btn-block" href="#" role="button">Изготовление макетов</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+
+    <div class="col-md-6 offset-md-3">
+        <div class="my-3 p-3 bg-white rounded box-shadow text-center">
+            <form action="{% url 'logout_url' %}" method="post">
+                {% csrf_token %}
+                <p class="media-body">Your username is {{ username }}</p>
+                <button type="submit" class="btn btn-primary">Logout</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

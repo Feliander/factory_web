@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<h1 class="text-center">login page</h1>
+
+    <div class="col-md-6 offset-md-3">
+        <div class="my-3 p-3 bg-white rounded box-shadow text-center">
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>{{ message }}</strong>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form action="{% url 'login_url' %}" method="post">
+                {% csrf_token %}
+
+                {% for field in form %}
+                    <div class="form-group">
+                        {% if field.errors %}
+                            <div class="alert alert-danger">
+                                {{ field.errors }}
+                            </div>
+                        {% endif %}
+                        {{ field.label }}
+                        {{ field }}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+
+        </div>
+        <div class="my-3 p-3 bg-white rounded box-shadow text-center">
+            <p>If you don't have an account you can create a new one</p>
+            <a type="button" class="btn btn-primary mt-2" href="{% url 'create_user_url' %}">Create a new user</a>
+        </div>
+    </div>
+{% endblock %}
+
+
