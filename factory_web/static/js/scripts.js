@@ -35,10 +35,35 @@ function initializeClock(id, end_time) {
 
 
 var options = {month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric'};
-//var deadline = new Date().toLocaleDateString('en-US', options);
 
+function button_disable(){
+    $('#stop').attr('disabled', 'disabled');
+    $('#plan').attr('disabled', 'disabled');
+    $('#setup').attr('disabled', 'disabled');
+    $('#auto_serv').attr('disabled', 'disabled');
+    $('#breaking').attr('disabled', 'disabled');
+    $('#task').attr('disabled', 'disabled');
+    $('#material').attr('disabled', 'disabled');
+    $('#ppr').attr('disabled', 'disabled');
+    $('#model').attr('disabled', 'disabled')
+}
+
+function button_enable(){
+    $('#stop').removeAttr('disabled');
+    $('#plan').removeAttr('disabled');
+    $('#setup').removeAttr('disabled');
+    $('#auto_serv').removeAttr('disabled');
+    $('#breaking').removeAttr('disabled');
+    $('#task').removeAttr('disabled');
+    $('#material').removeAttr('disabled');
+    $('#ppr').removeAttr('disabled');
+    $('#model').removeAttr('disabled')
+}
+
+button_disable()
 
 $(document).ready(function(){
+
 
     $.ajax({
         url: '',
@@ -46,33 +71,39 @@ $(document).ready(function(){
         success: function(response) {
             if (response.seconds) {
                 initializeClock('countdown', response.seconds);
+                $('#start').attr('disabled', 'disabled')
+                button_enable()
             } else {}
         }
     });
 
     $('#start').click(function(){
-       $.ajax({
-           url: '',
-           type: 'get',
-           data: {
-               button_text: new Date().toLocaleDateString('en-US', options)
-           },
-           success: function(response) {
-               initializeClock('countdown', response.seconds);
-           }
-       });
+        $('#this').attr('disabled', 'disabled')
+        button_enable()
+        $.ajax({
+            url: '',
+            type: 'get',
+            data: {
+                button_text: new Date().toLocaleDateString('en-US', options)
+            },
+            success: function(response) {
+                initializeClock('countdown', response.seconds);
+            }
+        });
     });
 
     $('#stop').click(function(){
-       $.ajax({
-           url: '',
-           type: 'get',
-           data: {
-               button_text: 'stop'
-           },
-           success: function(response) {
-           }
-       });
+        $('#start').removeAttr('disabled');
+        button_disable()
+        $.ajax({
+            url: '',
+            type: 'get',
+            data: {
+                button_text: 'stop'
+            },
+            success: function(response) {
+            }
+        });
     });
 
 })

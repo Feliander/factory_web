@@ -30,14 +30,18 @@ class Main(View):
 
     def get(self, request):
         if request.is_ajax():
+            print('request is ajax')
             if Employee.objects.filter(user__exact=request.user.pk).count():
+                print('User has an employee')
                 date_time = request.GET.get('button_text')
                 if date_time == 'stop':
+                    print('date_time is stop')
                     response = HttpResponse()
                     response.delete_cookie("date_time")
                     return response
                 else:
                     if "date_time" in request.COOKIES:
+                        print('date_time in cookies')
                         return JsonResponse({'seconds': request.COOKIES['date_time']}, status=200)
                     else:
                         if date_time:
@@ -45,11 +49,13 @@ class Main(View):
                             response.set_cookie("date_time", date_time)
                             return response
         if request.user.is_authenticated:
+            print('user is authenticated')
             context = {
                 'nav_bar': 'home'
             }
             return render(request, 'mainapp/main.html', context=context)
         else:
+            print('user isn\'t authenticated')
             return redirect('/login/')
 
     def post(self, request):
