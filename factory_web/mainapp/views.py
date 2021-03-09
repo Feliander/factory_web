@@ -6,60 +6,88 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
-from django.template import loader
 
 
 from .forms import *
 from .models import *
 
 
-def logout_view(request):
-    logout(request)
-    return redirect('/')
-
-
 def timer2(value='start'):
     t = 0
     while value == 'start':
         t += 1
-        print(t)
         time.sleep(1)
+
+
+def logout_view(request):
+    logout(request)
+    if "date_time" in request.COOKIES:
+        response = HttpResponse("", status=302)
+        response['Location'] = '/login/'
+        response.delete_cookie("date_time")
+        return response
+    else:
+        return redirect('/login/')
+
+
+class PersonalArea(LoginRequiredMixin, View):
+    raise_exception = True
+
+    def get(self, request):
+        username = request.user
+        context = {
+            'username': username,
+            'nav_bar': 'user'
+        }
+        return render(request, 'mainapp/personal_area.html', context=context)
 
 
 class Main(View):
 
     def get(self, request):
         if request.is_ajax():
-            print('request is ajax')
             if Employee.objects.filter(user__exact=request.user.pk).count():
-                print('User has an employee')
                 date_time = request.GET.get('button_text')
-                if date_time == 'stop':
-                    print('date_time is stop')
-                    response = HttpResponse()
-                    response.delete_cookie("date_time")
-                    return response
-                else:
-                    if "date_time" in request.COOKIES:
-                        print('date_time in cookies')
-                        return JsonResponse({'seconds': request.COOKIES['date_time']}, status=200)
+                date_time1 = request.GET.get('new_button_text')
+                if date_time:
+                    if date_time == 'stop':
+                        response = HttpResponse()
+                        response.delete_cookie("date_time")
+                        return response
+                    if "date_time" not in request.COOKIES:
+                        response = HttpResponse()
+                        response.set_cookie("date_time", date_time)
+                        return response
+                if date_time1:
+                    if 'date_time1' in request.COOKIES:
+                        response = HttpResponse()
+                        response.delete_cookie("date_time1", date_time1)
+                        return response
                     else:
-                        if date_time:
-                            response = HttpResponse()
-                            response.set_cookie("date_time", date_time)
-                            return response
+                        response = HttpResponse()
+                        response.set_cookie("date_time1", date_time1)
+                        return response
+                if "date_time" in request.COOKIES and 'date_time1' in request.COOKIES:
+                    return JsonResponse({
+                        'seconds': request.COOKIES['date_time'],
+                        'seconds1': request.COOKIES['date_time1']
+                    }, status=200)
+                elif "date_time" in request.COOKIES:
+                    return JsonResponse({'seconds': request.COOKIES['date_time']}, status=200)
+            else:
+                return redirect('/create-employee/')
         if request.user.is_authenticated:
-            print('user is authenticated')
             context = {
                 'nav_bar': 'home'
             }
             return render(request, 'mainapp/main.html', context=context)
         else:
-            print('user isn\'t authenticated')
             return redirect('/login/')
 
     def post(self, request):
+        print(1)
         if Employee.objects.filter(user__exact=request.user.pk).count():
+            print(2)
             # timer2() не удаляй, дебил. она тебя сожрёт
             data = {
                 'secs': datetime.datetime.strftime(datetime.datetime.now(), "%S"),
@@ -71,11 +99,12 @@ class Main(View):
             }
             bound_form = TimeForm(data=data)
             if bound_form.is_valid():
-                clicked = 'True'
+                print(3)
                 bound_form.save()
                 return redirect('/')
             return render(request, 'mainapp/main.html')
         else:
+            print(4)
             return redirect('/create-employee/')
 
 
@@ -83,25 +112,22 @@ class CreateAnEmployee(LoginRequiredMixin, View):
     raise_exception = True
 
     def get(self, request):
-        if request.user.is_authenticated:
-            if not Employee.objects.filter(user__exact=request.user.pk).count():
-                user = request.user
-                data = {
-                    'user': user,
-                    'first_name': user,
-                    'last_name': 'Ivanov',
-                    'position': 'workman'
-                }
-                form = CreateAnEmployeeForm(data=data)
-                context = {
-                    'form': form,
-                    'nav_bar': 'new_user'
-                }
-                return render(request, 'mainapp/create_employee.html', context=context)
-            else:
-                raise PermissionError('Error')
+        if not Employee.objects.filter(user__exact=request.user.pk).count():
+            user = request.user
+            data = {
+                'user': user,
+                'first_name': user,
+                'last_name': 'Ivanov',
+                'position': 'workman'
+            }
+            form = CreateAnEmployeeForm(data=data)
+            context = {
+                'form': form,
+                'nav_bar': 'new_user'
+            }
+            return render(request, 'mainapp/create_employee.html', context=context)
         else:
-            return redirect('/login/')
+            raise PermissionError('Error')
 
     def post(self, request):
         bound_form = CreateAnEmployeeForm(request.POST)
@@ -164,14 +190,3 @@ class Login(View):
         else:
             messages.add_message(request, messages.INFO, 'Error')
             return redirect('/login/')
-
-
-class PersonalArea(View):
-
-    def get(self, request):
-        username = request.user
-        context = {
-            'username': username,
-            'nav_bar': 'user'
-        }
-        return render(request, 'mainapp/personal_area.html', context=context)

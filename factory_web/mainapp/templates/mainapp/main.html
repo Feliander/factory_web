@@ -6,8 +6,10 @@
 
     <div class="bg-purple rounded box-shadow">
         <div class="text-center">
-            <h6 class="countdown-title">Working hours</h6>
+
+
             <div id="countdown" class="countdown">
+                <p class="countdown-title">Working hours</p>
                 <div class="countdown-number">
                     <span class="hours countdown-time"></span>
                     <span class="countdown-text">Hours</span>
@@ -21,6 +23,23 @@
                     <span class="countdown-text">Seconds</span>
                 </div>
             </div>
+
+            <div id="countdown1" class="countdown">
+                <p class="countdown-title">Working hours1</p>
+                <div class="countdown-number">
+                    <span class="hours countdown-time"></span>
+                    <span class="countdown-text">Hours</span>
+                </div>
+                <div class="countdown-number">
+                    <span class="minutes countdown-time"></span>
+                    <span class="countdown-text">Minutes</span>
+                </div>
+                <div class="countdown-number">
+                    <span class="seconds countdown-time"></span>
+                    <span class="countdown-text">Seconds</span>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -28,20 +47,33 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm">
+
                     <form action="{% url 'home_page_url' %}" method="post">
                         {% csrf_token %}
                         <button id="start" type="submit" class="btn btn-success btn-block">Начало смены</button>
                     </form>
+
                 </div>
                 <div class="col-sm">
-                    <button id="stop" type="button" class="btn btn-danger btn-block">Конец смены</button>
+
+                    <form action="{% url 'home_page_url' %}" method="post">
+                        {% csrf_token %}
+                        <button id="stop" type="submit" class="btn btn-danger btn-block">Конец смены</button>
+                    </form>
+
                 </div>
                 <div class="col-sm"></div>
                 <div class="col-sm"></div>
             </div>
+
             <div class="row mt-4">
                 <div class="col-sm">
-                    <button id="plan" type="button" class="btn btn-info btn-block">Плановый перерыв</button>
+
+                    <form action="{% url 'home_page_url' %}" method="post">
+                        {% csrf_token %}
+                        <button id="plan" type="submit" class="btn btn-info btn-block">Плановый перерыв</button>
+                    </form>
+
                 </div>
                 <div class="col-sm">
                     <button id="setup" type="button" class="btn btn-info btn-block">Переналадка</button>

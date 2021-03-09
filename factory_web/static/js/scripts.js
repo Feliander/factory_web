@@ -73,7 +73,12 @@ $(document).ready(function(){
                 initializeClock('countdown', response.seconds);
                 $('#start').attr('disabled', 'disabled')
                 button_enable()
-            } else {}
+            }
+            if (response.seconds1) {
+                initializeClock('countdown1', response.seconds1);
+                button_disable()
+                $('#plan').removeAttr('disabled');
+            }
         }
     });
 
@@ -102,6 +107,21 @@ $(document).ready(function(){
                 button_text: 'stop'
             },
             success: function(response) {
+            }
+        });
+    });
+
+    $('#plan').click(function(){
+        button_disable();
+        $('#plan').removeAttr('disabled');
+        $.ajax({
+            url: '',
+            type: 'get',
+            data: {
+                new_button_text: new Date().toLocaleDateString('en-US', options)
+            },
+            success: function(response) {
+                initializeClock('countdown1', response.seconds1);
             }
         });
     });
