@@ -50,18 +50,18 @@ class Main(View):
                 date_time = request.GET.get('button_text')
                 date_time1 = request.GET.get('new_button_text')
                 if date_time:
-                    if date_time == 'stop':
+                    if 'date_time' in request.COOKIES:
                         response = HttpResponse()
                         response.delete_cookie("date_time")
                         return response
-                    if "date_time" not in request.COOKIES:
+                    else:
                         response = HttpResponse()
                         response.set_cookie("date_time", date_time)
                         return response
                 if date_time1:
                     if 'date_time1' in request.COOKIES:
                         response = HttpResponse()
-                        response.delete_cookie("date_time1", date_time1)
+                        response.delete_cookie("date_time1")
                         return response
                     else:
                         response = HttpResponse()
@@ -78,16 +78,15 @@ class Main(View):
                 return redirect('/create-employee/')
         if request.user.is_authenticated:
             context = {
-                'nav_bar': 'home'
+                'nav_bar': 'home',
+                'machine': 'machine is ..'
             }
             return render(request, 'mainapp/main.html', context=context)
         else:
             return redirect('/login/')
 
     def post(self, request):
-        print(1)
         if Employee.objects.filter(user__exact=request.user.pk).count():
-            print(2)
             # timer2() не удаляй, дебил. она тебя сожрёт
             data = {
                 'secs': datetime.datetime.strftime(datetime.datetime.now(), "%S"),
@@ -99,12 +98,10 @@ class Main(View):
             }
             bound_form = TimeForm(data=data)
             if bound_form.is_valid():
-                print(3)
                 bound_form.save()
                 return redirect('/')
             return render(request, 'mainapp/main.html')
         else:
-            print(4)
             return redirect('/create-employee/')
 
 

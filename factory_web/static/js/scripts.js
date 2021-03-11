@@ -36,7 +36,7 @@ function initializeClock(id, end_time) {
 
 var options = {month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric'};
 
-function button_disable(){
+function buttons_disable(){
     $('#stop').attr('disabled', 'disabled');
     $('#plan').attr('disabled', 'disabled');
     $('#setup').attr('disabled', 'disabled');
@@ -48,7 +48,7 @@ function button_disable(){
     $('#model').attr('disabled', 'disabled')
 }
 
-function button_enable(){
+function buttons_enable(){
     $('#stop').removeAttr('disabled');
     $('#plan').removeAttr('disabled');
     $('#setup').removeAttr('disabled');
@@ -60,10 +60,9 @@ function button_enable(){
     $('#model').removeAttr('disabled')
 }
 
-button_disable()
+buttons_disable()
 
 $(document).ready(function(){
-
 
     $.ajax({
         url: '',
@@ -72,11 +71,11 @@ $(document).ready(function(){
             if (response.seconds) {
                 initializeClock('countdown', response.seconds);
                 $('#start').attr('disabled', 'disabled')
-                button_enable()
+                buttons_enable()
             }
             if (response.seconds1) {
                 initializeClock('countdown1', response.seconds1);
-                button_disable()
+                buttons_disable()
                 $('#plan').removeAttr('disabled');
             }
         }
@@ -84,44 +83,35 @@ $(document).ready(function(){
 
     $('#start').click(function(){
         $('#this').attr('disabled', 'disabled')
-        button_enable()
+        buttons_enable()
         $.ajax({
             url: '',
             type: 'get',
             data: {
                 button_text: new Date().toLocaleDateString('en-US', options)
-            },
-            success: function(response) {
-                initializeClock('countdown', response.seconds);
             }
         });
     });
 
     $('#stop').click(function(){
         $('#start').removeAttr('disabled');
-        button_disable()
         $.ajax({
             url: '',
             type: 'get',
             data: {
                 button_text: 'stop'
-            },
-            success: function(response) {
             }
         });
     });
 
     $('#plan').click(function(){
-        button_disable();
+        buttons_disable();
         $('#plan').removeAttr('disabled');
         $.ajax({
             url: '',
             type: 'get',
             data: {
                 new_button_text: new Date().toLocaleDateString('en-US', options)
-            },
-            success: function(response) {
-                initializeClock('countdown1', response.seconds1);
             }
         });
     });

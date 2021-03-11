@@ -56,11 +56,22 @@
 
             <div class="align-right">
                 <ul class="navbar-nav mr-auto">
+
                     <li class="nav-item {% if nav_bar == 'user' %}active{% endif %}">
                         <a class="nav-link" href="{% url 'personal_area_url' %}">
                             User is {{ user }}
                         </a>
                     </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{ machine }}
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="#">TruLaser 3030</a>
+                        </div>
+                    </li>
+
                 </ul>
             </div>
 
