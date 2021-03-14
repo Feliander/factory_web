@@ -5,6 +5,22 @@ from django.contrib.auth.models import User
 from .models import *
 
 
+class EmployeeMachineForm(forms.ModelForm):
+    class Meta:
+        model = EmployeeMachine
+        fields = ['employee', 'machine']
+
+        # widgets = {
+        #     'employee': forms.TextInput(),
+        #     'machine': forms.TextInput()
+        # }
+
+    def __init__(self, *args, **kwargs):
+        super(EmployeeMachineForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
+
+
 class TimeForm(forms.ModelForm):
     class Meta:
         model = Time

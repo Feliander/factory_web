@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+
+    <div class="col-md-6 offset-md-3">
+        <div class="my-3 p-3 bg-white rounded box-shadow text-center">
+
+            {% csrf_token %}
+            <p class="media-body">Your username is {{ username }}</p>
+            <p class="media-body">Your employee is {{ employee }}</p>
+
+            <form action="{% url 'employee_machine_binding_url' %}" method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="form-group">
+                    {% if field.errors %}
+                    <div class="alert alert-danger">
+                        {{ field.errors }}
+                    </div>
+                    {% endif %}
+                    {{ field }}
+                </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary">Associate an employee with a machine</button>
+            </form>
+
+        </div>
+    </div>
+{% endblock %}

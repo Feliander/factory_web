@@ -10,4 +10,5 @@ urlpatterns = [
     path('login/', Login.as_view(), name='login_url'),
     path('personal-area/', PersonalArea.as_view(), name='personal_area_url'),
     path('logout/', logout_view, name='logout_url'),
+    path('employee-machine-binding/', EmployeeMachineBindingView.as_view(), name='employee_machine_binding_url')
 ]
