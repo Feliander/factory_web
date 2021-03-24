@@ -10,10 +10,9 @@ class EmployeeMachineForm(forms.ModelForm):
         model = EmployeeMachine
         fields = ['employee', 'machine']
 
-        # widgets = {
-        #     'employee': forms.TextInput(),
-        #     'machine': forms.TextInput()
-        # }
+        widgets = {
+            'employee': forms.HiddenInput()
+        }
 
     def __init__(self, *args, **kwargs):
         super(EmployeeMachineForm, self).__init__(*args, **kwargs)

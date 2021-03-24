@@ -26,11 +26,13 @@
                                 {{ field.errors }}
                             </div>
                         {% endif %}
+
                         {% if field.label != 'User' %}
                             {{ field.label }}
                         {% else %}
                             {{ pass }}
                         {% endif %}
+
                         {{ field }}
                     </div>
                 {% endfor %}

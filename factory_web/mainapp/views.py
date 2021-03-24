@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
-
+from django.contrib.auth.models import User
 
 from .forms import *
 from .models import *
@@ -30,6 +30,24 @@ def logout_view(request):
         return redirect('/login/')
 
 
+def machine_choice(request):
+    try:
+        employee = Employee.objects.get(user=request.user)
+    except TypeError:
+        employee = None
+    except Employee.DoesNotExist:
+        employee = None
+    try:
+        choice = Machine.objects.filter(employeemachine=EmployeeMachine.objects.filter(employee=employee.pk)[0])[0]
+    except IndexError:
+        choice = ''
+    except AttributeError:
+        choice = ''
+    if not choice:
+        choice = 'unselected'
+    return choice
+
+
 class PersonalArea(LoginRequiredMixin, View):
     raise_exception = True
 
@@ -37,94 +55,25 @@ class PersonalArea(LoginRequiredMixin, View):
         username = request.user
         context = {
             'username': username,
-            'nav_bar': 'user'
+            'nav_bar': 'user',
+            'machine': machine_choice(request)
         }
         return render(request, 'mainapp/personal_area.html', context=context)
-
-
-# def employee_machine_binding(request):
-#     print('111')
-#     if request.is_ajax():
-#         machine = request.GET.get('machine')
-#         print()
-#         print(machine)
-#         print()
-#     data = {
-#         'employee': Employee.objects.get(user=request.user),
-#         'machine': Machine.objects.filter(name__iexact='laser3030')
-#     }
-#     print()
-#     print(Machine.objects.get(name='TruLaser 3030'))
-#     print()
-#     form = EmployeeMachineForm(data)
-#     if form.is_valid():
-#         form.save()
-#         print('success')
-#         return redirect('/')
-#     print('unfortunately')
-#     return redirect('/')
-
-
-# class EmployeeMachineBindingView(View):
-#
-#     def get(self, request):
-#         print('get request')
-#         if request.is_ajax():
-#             print('request is ajax')
-#             machine = request.GET.get('machine')
-#             print()
-#             print(machine)
-#             print()
-#             username = request.user
-#             employee = Employee.objects.get(user=request.user)
-#             context = {
-#                 'username': username,
-#                 'employee': employee
-#             }
-#             return render(request, 'mainapp/employee_machine_binding.html', context=context)
-#         return redirect('/')
-#
-#     def post(self, request):
-#         data = {
-#             'employee': Employee.objects.get(user=request.user),
-#             'machine': Machine.objects.filter(name__iexact='laser3030')
-#         }
-#         # print()
-#         # print(Machine.objects.get(name='TruLaser 3030'))
-#         # print()
-#         form = EmployeeMachineForm(data)
-#         if form.is_valid():
-#             form.save()
-#             print('success')
-#             return redirect('/')
-#         print('unfortunately')
-#         return redirect('/')
 
 
 class EmployeeMachineBindingView(View):
 
     def get(self, request):
-        username = request.user
         employee = Employee.objects.get(user=request.user)
-        machine = Machine.objects.get(name='TruLaser 3030')
-        try:
-            machine_choice = \
-                Machine.objects.filter(employeemachine=EmployeeMachine.objects.filter(employee=employee.pk)[0])[0]
-        except IndexError:
-            machine_choice = ''
-        if not machine_choice:
-            machine_choice = 'unselected'
         data = {
             'employee': employee,
-            'machine': machine
         }
         form = EmployeeMachineForm(data=data)
         context = {
             'form': form,
-            'username': username,
             'employee': employee,
             'nav_bar': 'machine',
-            'machine': machine_choice
+            'machine': machine_choice(request)
         }
         return render(request, 'mainapp/employee_machine_binding.html', context=context)
 
@@ -175,16 +124,9 @@ class Main(View):
             else:
                 return redirect('/create-employee/')
         if request.user.is_authenticated:
-            employee = Employee.objects.get(user=request.user)
-            try:
-                machine_choice = Machine.objects.filter(employeemachine=EmployeeMachine.objects.filter(employee=employee.pk)[0])[0]
-            except IndexError:
-                machine_choice = ''
-            if not machine_choice:
-                machine_choice = 'unselected'
             context = {
                 'nav_bar': 'home',
-                'machine': machine_choice
+                'machine': machine_choice(request)
             }
             return render(request, 'mainapp/main.html', context=context)
         else:
@@ -225,7 +167,8 @@ class CreateAnEmployee(LoginRequiredMixin, View):
             form = CreateAnEmployeeForm(data=data)
             context = {
                 'form': form,
-                'nav_bar': 'new_user'
+                'nav_bar': 'new_user',
+                'machine': machine_choice(request)
             }
             return render(request, 'mainapp/create_employee.html', context=context)
         else:
@@ -250,7 +193,8 @@ class CreateAnUser(View):
         context = {
             'anon': request.user.is_anonymous,
             'form': form,
-            'nav_bar': 'new_user'
+            'nav_bar': 'new_user',
+            'machine': machine_choice(request)
         }
         return render(request, 'mainapp/create_user.html', context=context)
 
@@ -267,27 +211,16 @@ class CreateAnUser(View):
             password = request.POST['password2']
             user = authenticate(request, username=username, password=password)
             login(request, user)
-            return redirect('http://127.0.0.1:8000/create-employee/')
+            return redirect('/create-employee/')
         return render(request, 'mainapp/create_user.html', context=context)
 
 
 class Login(View):
 
     def get(self, request):
-        try:
-            employee = Employee.objects.get(user=request.user)
-        except TypeError:
-            employee = None
-        try:
-            machine_choice = \
-                Machine.objects.filter(employeemachine=EmployeeMachine.objects.filter(employee=employee.pk)[0])[0]
-        except IndexError and AttributeError:
-            machine_choice = ''
-        if not machine_choice:
-            machine_choice = 'unselected'
         form = LoginForm()
         context = {
-            'machine': machine_choice,
+            'machine': machine_choice(request),
             'anon': request.user.is_anonymous,
             'form': form,
             'nav_bar': 'login'
@@ -295,12 +228,20 @@ class Login(View):
         return render(request, 'mainapp/login.html', context=context)
 
     def post(self, request):
+        print('post')
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
-        if user is not None:
+        try:
+            name = User.objects.get(username=username)
+        except User.DoesNotExist:
+            name = ''
+        if not name:
+            messages.add_message(request, messages.INFO, 'User with the username isn\'t exist')
+            return redirect('/login/')
+        try:
             login(request, user)
             return redirect('/')
-        else:
-            messages.add_message(request, messages.INFO, 'Error')
+        except AttributeError:
+            messages.add_message(request, messages.INFO, 'Incorrect password')
             return redirect('/login/')

@@ -8,22 +8,25 @@
         <div class="my-3 p-3 bg-white rounded box-shadow text-center">
 
             {% csrf_token %}
-            <p class="media-body">Your username is {{ username }}</p>
-            <p class="media-body">Your employee is {{ employee }}</p>
+            <p class="media-body">Employee is {{ employee }}</p>
 
             <form action="{% url 'employee_machine_binding_url' %}" method="post">
                 {% csrf_token %}
+
                 {% for field in form %}
                 <div class="form-group">
-                    {% if field.errors %}
-                    <div class="alert alert-danger">
-                        {{ field.errors }}
-                    </div>
+
+                    {% if field.label == 'Employee' %}
+                        {{ pass }}
+                    {% else %}
+                        {{ field.label }}
                     {% endif %}
+
                     {{ field }}
                 </div>
                 {% endfor %}
-                <button type="submit" class="btn btn-primary">Associate an employee with a machine</button>
+
+                <button type="submit" class="btn btn-primary">Associate the employee with the machine</button>
             </form>
 
         </div>
