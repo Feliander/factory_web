@@ -88,7 +88,8 @@ $(document).ready(function(){
             url: '',
             type: 'get',
             data: {
-                button_text: new Date().toLocaleDateString('en-US', options)
+                button_text: new Date().toLocaleDateString('en-US', options),
+                action: 'start'
             }
         });
     });
@@ -99,7 +100,8 @@ $(document).ready(function(){
             url: '',
             type: 'get',
             data: {
-                button_text: 'stop'
+                button_text: 'stop',
+                action: 'stop'
             }
         });
     });
@@ -111,7 +113,9 @@ $(document).ready(function(){
             url: '',
             type: 'get',
             data: {
-                new_button_text: new Date().toLocaleDateString('en-US', options)
+                new_button_text: new Date().toLocaleDateString('en-US', options),
+                action: 'start_plan',
+                action1: 'stop_plan'
             }
         });
     });

@@ -38,7 +38,8 @@ def machine_choice(request):
     except Employee.DoesNotExist:
         employee = None
     try:
-        choice = Machine.objects.filter(employeemachine=EmployeeMachine.objects.filter(employee=employee.pk)[0])[0]
+        employee_machine = list(EmployeeMachine.objects.filter(employee=employee.pk))[-1]
+        choice = Machine.objects.filter(employeemachine=employee_machine)[0]
     except IndexError:
         choice = ''
     except AttributeError:
@@ -67,6 +68,7 @@ class EmployeeMachineBindingView(View):
         employee = Employee.objects.get(user=request.user)
         data = {
             'employee': employee,
+            'machine': machine_choice(request)
         }
         form = EmployeeMachineForm(data=data)
         context = {
@@ -93,7 +95,8 @@ class Main(View):
 
     def get(self, request):
         if request.is_ajax():
-            if Employee.objects.filter(user__exact=request.user.pk).count():
+            if Employee.objects.filter(user__exact=request.user.pk).count() and \
+                    EmployeeMachine.objects.filter(employee=Employee.objects.get(user=request.user).pk):
                 date_time = request.GET.get('button_text')
                 date_time1 = request.GET.get('new_button_text')
                 if date_time:
@@ -134,20 +137,40 @@ class Main(View):
 
     def post(self, request):
         if Employee.objects.filter(user__exact=request.user.pk).count():
-            # timer2() не удаляй, дебил. она тебя сожрёт
-            data = {
-                'secs': datetime.datetime.strftime(datetime.datetime.now(), "%S"),
-                'minutes': datetime.datetime.strftime(datetime.datetime.now(), "%M"),
-                'hour': datetime.datetime.strftime(datetime.datetime.now(), "%H"),
-                'day': datetime.datetime.strftime(datetime.datetime.now(), "%d"),
-                'month': datetime.datetime.strftime(datetime.datetime.now(), "%m"),
-                'year': datetime.datetime.strftime(datetime.datetime.now(), "%Y")
-            }
-            bound_form = TimeForm(data=data)
-            if bound_form.is_valid():
-                bound_form.save()
-                return redirect('/')
-            return render(request, 'mainapp/main.html')
+            if EmployeeMachine.objects.filter(employee=Employee.objects.get(user=request.user).pk):
+                # timer2() не удаляй, дебил. она тебя сожрёт
+                data = {
+                    'secs': datetime.datetime.strftime(datetime.datetime.now(), "%S"),
+                    'minutes': datetime.datetime.strftime(datetime.datetime.now(), "%M"),
+                    'hour': datetime.datetime.strftime(datetime.datetime.now(), "%H"),
+                    'day': datetime.datetime.strftime(datetime.datetime.now(), "%d"),
+                    'month': datetime.datetime.strftime(datetime.datetime.now(), "%m"),
+                    'year': datetime.datetime.strftime(datetime.datetime.now(), "%Y")
+                }
+                bound_form = TimeForm(data=data)
+                if bound_form.is_valid():
+                    bound_form.save()
+                    data1 = {
+                        'name': request.GET.get('action'),
+                        'emp_mach': list(EmployeeMachine.objects.filter(employee=Employee.objects.get(user=1).pk))[-1],
+                        'time': list(Time.objects.all())[-1],
+                        'total': 10,
+                        'plan': 0,
+                        'setup': 0,
+                        'auto_serv': 0,
+                        'ppr': 0,
+                        'br': 0,
+                        'material': 0,
+                        'task': 0,
+                        'model': 0
+                    }
+                    bound_form1 = ActionForm(data=data1)
+                    if bound_form1.is_valid():
+                        bound_form1.save()
+                        return redirect('/')
+                return render(request, 'mainapp/main.html')
+            else:
+                return redirect('/employee-machine-binding/')
         else:
             return redirect('/create-employee/')
 
@@ -156,34 +179,35 @@ class CreateAnEmployee(LoginRequiredMixin, View):
     raise_exception = True
 
     def get(self, request):
-        if not Employee.objects.filter(user__exact=request.user.pk).count():
-            user = request.user
-            data = {
-                'user': user,
-                'first_name': user,
-                'last_name': 'Ivanov',
-                'position': 'workman'
-            }
-            form = CreateAnEmployeeForm(data=data)
-            context = {
-                'form': form,
-                'nav_bar': 'new_user',
-                'machine': machine_choice(request)
-            }
-            return render(request, 'mainapp/create_employee.html', context=context)
-        else:
-            raise PermissionError('Error')
+        user = request.user
+        data = {
+            'user': user,
+            'first_name': user,
+            'last_name': 'Ivanov',
+            'position': 'workman'
+        }
+        form = CreateAnEmployeeForm(data=data)
+        context = {
+            'form': form,
+            'nav_bar': 'new_user',
+            'machine': machine_choice(request)
+        }
+        return render(request, 'mainapp/create_employee.html', context=context)
 
     def post(self, request):
-        bound_form = CreateAnEmployeeForm(request.POST)
-        context = {
-            'form': bound_form,
-            'nav_bar': 'new_user'
-        }
-        if bound_form.is_valid():
-            bound_form.save()
-            return redirect('/')
-        return render(request, 'mainapp/create_employee.html', context=context)
+        if not Employee.objects.filter(user__exact=request.user.pk).count():
+            bound_form = CreateAnEmployeeForm(request.POST)
+            context = {
+                'form': bound_form,
+                'nav_bar': 'new_user'
+            }
+            if bound_form.is_valid():
+                bound_form.save()
+                return redirect('/employee-machine-binding/')
+            return render(request, 'mainapp/create_employee.html', context=context)
+        else:
+            messages.add_message(request, messages.INFO, 'You\'ve already created an employee')
+            return redirect('/create-employee/')
 
 
 class CreateAnUser(View):

@@ -29,7 +29,8 @@ class TimeForm(forms.ModelForm):
 class ActionForm(forms.ModelForm):
     class Meta:
         model = Action
-        fields = []
+        fields = ['name', 'emp_mach', 'time', 'total', 'plan', 'setup', 'auto_serv', 'ppr', 'br', 'material', 'task',
+                  'model']
 
 
 class CreateAnEmployeeForm(forms.ModelForm):
