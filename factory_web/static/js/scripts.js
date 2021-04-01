@@ -64,6 +64,8 @@ buttons_disable()
 
 $(document).ready(function(){
 
+    let csrf = $('input[name=csrfmiddlewaretoken]').val();
+
     $.ajax({
         url: '',
         type: 'get',
@@ -88,8 +90,7 @@ $(document).ready(function(){
             url: '',
             type: 'get',
             data: {
-                button_text: new Date().toLocaleDateString('en-US', options),
-                action: 'start'
+                button_text: new Date().toLocaleDateString('en-US', options)
             }
         });
     });
@@ -100,8 +101,7 @@ $(document).ready(function(){
             url: '',
             type: 'get',
             data: {
-                button_text: 'stop',
-                action: 'stop'
+                button_text: 'stop'
             }
         });
     });
@@ -113,9 +113,18 @@ $(document).ready(function(){
             url: '',
             type: 'get',
             data: {
-                new_button_text: new Date().toLocaleDateString('en-US', options),
-                action: 'start_plan',
-                action1: 'stop_plan'
+                new_button_text: new Date().toLocaleDateString('en-US', options)
+            }
+        });
+    });
+
+    $('#setup').click(function(){
+        $.ajax({
+            url: '',
+            type: 'post',
+            data: {
+                action: 'some action',
+                // csrfmiddlewaretoken: csrf
             }
         });
     });

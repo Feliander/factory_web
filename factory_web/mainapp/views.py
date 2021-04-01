@@ -151,7 +151,7 @@ class Main(View):
                 if bound_form.is_valid():
                     bound_form.save()
                     data1 = {
-                        'name': request.GET.get('action'),
+                        'name': request.POST.get('action'),
                         'emp_mach': list(EmployeeMachine.objects.filter(employee=Employee.objects.get(user=1).pk))[-1],
                         'time': list(Time.objects.all())[-1],
                         'total': 10,

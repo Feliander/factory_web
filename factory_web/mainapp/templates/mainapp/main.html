@@ -76,7 +76,12 @@
 
                 </div>
                 <div class="col-sm">
-                    <button id="setup" type="button" class="btn btn-info btn-block">Переналадка</button>
+
+                    <form action="{% url 'home_page_url' %}" method="post">
+                        {% csrf_token %}
+                        <button id="setup" type="submit" class="btn btn-info btn-block">Переналадка</button>
+                    </form>
+
                 </div>
                 <div class="col-sm">
                     <button id="auto_serv" type="button" class="btn btn-info btn-block">Автономное обслуживание</button>
