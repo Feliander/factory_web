@@ -1,2 +1,3 @@
 .idea/
 factory_web/mainapp/__pycache__
+factory_web/mainapp/migrations/__pycache__
