@@ -12,6 +12,42 @@ from .forms import *
 from .models import *
 
 
+def enable_button():
+    button = str(list(Action.objects.all())[-1])
+    if button.find('plan') != -1:
+        result = '#plan'
+        return result
+    elif button.find('setup') != -1:
+        result = '#setup'
+        return result
+    elif button.find('auto_serv') != -1:
+        result = '#auto_serv'
+        return result
+    elif button.find('ppr') != -1:
+        result = '#ppr'
+        return result
+    elif button.find('breaking') != -1:
+        result = '#breaking'
+        return result
+    elif button.find('material') != -1:
+        result = '#material'
+        return result
+    elif button.find('task') != -1:
+        result = '#task'
+        return result
+    elif button.find('model') != -1:
+        result = '#model'
+        return result
+
+
+def action(request):
+    if 'date_time' in request.COOKIES and 'date_time1' in request.COOKIES:
+        act = request.POST.get('action1')
+    else:
+        act = request.POST.get('action')
+    return act
+
+
 def timer2(value='start'):
     t = 0
     while value == 'start':
@@ -120,10 +156,14 @@ class Main(View):
                 if "date_time" in request.COOKIES and 'date_time1' in request.COOKIES:
                     return JsonResponse({
                         'seconds': request.COOKIES['date_time'],
-                        'seconds1': request.COOKIES['date_time1']
+                        'seconds1': request.COOKIES['date_time1'],
+                        'button_choice': enable_button()
                     }, status=200)
                 elif "date_time" in request.COOKIES:
-                    return JsonResponse({'seconds': request.COOKIES['date_time']}, status=200)
+                    return JsonResponse({
+                        'seconds': request.COOKIES['date_time'],
+                        'button_choice': enable_button()
+                    }, status=200)
             else:
                 return redirect('/create-employee/')
         if request.user.is_authenticated:
@@ -136,43 +176,44 @@ class Main(View):
             return redirect('/login/')
 
     def post(self, request):
-        if Employee.objects.filter(user__exact=request.user.pk).count():
-            if EmployeeMachine.objects.filter(employee=Employee.objects.get(user=request.user).pk):
-                # timer2() не удаляй, дебил. она тебя сожрёт
-                data = {
-                    'secs': datetime.datetime.strftime(datetime.datetime.now(), "%S"),
-                    'minutes': datetime.datetime.strftime(datetime.datetime.now(), "%M"),
-                    'hour': datetime.datetime.strftime(datetime.datetime.now(), "%H"),
-                    'day': datetime.datetime.strftime(datetime.datetime.now(), "%d"),
-                    'month': datetime.datetime.strftime(datetime.datetime.now(), "%m"),
-                    'year': datetime.datetime.strftime(datetime.datetime.now(), "%Y")
-                }
-                bound_form = TimeForm(data=data)
-                if bound_form.is_valid():
-                    bound_form.save()
-                    data1 = {
-                        'name': request.POST.get('action'),
-                        'emp_mach': list(EmployeeMachine.objects.filter(employee=Employee.objects.get(user=1).pk))[-1],
-                        'time': list(Time.objects.all())[-1],
-                        'total': 10,
-                        'plan': 0,
-                        'setup': 0,
-                        'auto_serv': 0,
-                        'ppr': 0,
-                        'br': 0,
-                        'material': 0,
-                        'task': 0,
-                        'model': 0
+        if request.is_ajax():
+            if Employee.objects.filter(user__exact=request.user.pk).count():
+                if EmployeeMachine.objects.filter(employee=Employee.objects.get(user=request.user).pk):
+                    # timer2() не удаляй, дебил. она тебя сожрёт
+                    data = {
+                        'secs': datetime.datetime.strftime(datetime.datetime.now(), "%S"),
+                        'minutes': datetime.datetime.strftime(datetime.datetime.now(), "%M"),
+                        'hour': datetime.datetime.strftime(datetime.datetime.now(), "%H"),
+                        'day': datetime.datetime.strftime(datetime.datetime.now(), "%d"),
+                        'month': datetime.datetime.strftime(datetime.datetime.now(), "%m"),
+                        'year': datetime.datetime.strftime(datetime.datetime.now(), "%Y")
                     }
-                    bound_form1 = ActionForm(data=data1)
-                    if bound_form1.is_valid():
-                        bound_form1.save()
-                        return redirect('/')
-                return render(request, 'mainapp/main.html')
+                    bound_form = TimeForm(data=data)
+                    if bound_form.is_valid():
+                        bound_form.save()
+                        data1 = {
+                            'name': action(request),
+                            'emp_mach': list(EmployeeMachine.objects.filter(employee=Employee.objects.get(user=1).pk))[-1],
+                            'time': list(Time.objects.all())[-1],
+                            'total': 10,
+                            'plan': 0,
+                            'setup': 0,
+                            'auto_serv': 0,
+                            'ppr': 0,
+                            'br': 0,
+                            'material': 0,
+                            'task': 0,
+                            'model': 0
+                        }
+                        bound_form1 = ActionForm(data=data1)
+                        if bound_form1.is_valid():
+                            bound_form1.save()
+                    return redirect('/')
+                else:
+                    return redirect('/employee-machine-binding/')
             else:
-                return redirect('/employee-machine-binding/')
-        else:
-            return redirect('/create-employee/')
+                return redirect('/create-employee/')
+        return redirect('/')
 
 
 class CreateAnEmployee(LoginRequiredMixin, View):

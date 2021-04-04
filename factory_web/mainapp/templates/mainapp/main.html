@@ -84,24 +84,54 @@
 
                 </div>
                 <div class="col-sm">
-                    <button id="auto_serv" type="button" class="btn btn-info btn-block">Автономное обслуживание</button>
+
+                    <form action="{% url 'home_page_url' %}" method="post">
+                        {% csrf_token %}
+                        <button id="auto_serv" type="submit" class="btn btn-info btn-block">Автономное обслуживание</button>
+                    </form>
+
                 </div>
                 <div class="col-sm">
-                    <button id="ppr" type="button" class="btn btn-info btn-block">ППР</button>
+
+                    <form action="{% url 'home_page_url' %}" method="post">
+                        {% csrf_token %}
+                        <button id="ppr" type="submit" class="btn btn-info btn-block">ППР</button>
+                    </form>
+
                 </div>
             </div>
             <div class="row mt-4">
                 <div class="col-sm">
-                    <button id="breaking" type="button" class="btn btn-info btn-block">Поломка оборудования</button>
+
+                    <form action="{% url 'home_page_url' %}" method="post">
+                        {% csrf_token %}
+                        <button id="breaking" type="submit" class="btn btn-info btn-block">Поломка оборудования</button>
+                    </form>
+
                 </div>
                 <div class="col-sm">
-                    <button id="material" type="button" class="btn btn-info btn-block">Отсутствие материалов</button>
+
+                    <form action="{% url 'home_page_url' %}" method="post">
+                        {% csrf_token %}
+                        <button id="material" type="submit" class="btn btn-info btn-block">Отсутствие материалов</button>
+                    </form>
+
                 </div>
                 <div class="col-sm">
-                    <button id="task" type="button" class="btn btn-info btn-block">Отсутствие задания</button>
+
+                    <form action="{% url 'home_page_url' %}" method="post">
+                        {% csrf_token %}
+                        <button id="task" type="submit" class="btn btn-info btn-block">Отсутствие задания</button>
+                    </form>
+
                 </div>
                 <div class="col-sm">
-                    <button id="model" type="button" class="btn btn-info btn-block">Изготовление макетов</button>
+
+                    <form action="{% url 'home_page_url' %}" method="post">
+                        {% csrf_token %}
+                        <button id="model" type="submit" class="btn btn-info btn-block">Изготовление макетов</button>
+                    </form>
+
                 </div>
             </div>
         </div>

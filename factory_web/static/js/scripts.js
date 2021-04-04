@@ -78,7 +78,7 @@ $(document).ready(function(){
             if (response.seconds1) {
                 initializeClock('countdown1', response.seconds1);
                 buttons_disable()
-                $('#plan').removeAttr('disabled');
+                $(response.button_choice).removeAttr('disabled');
             }
         }
     });
@@ -95,6 +95,19 @@ $(document).ready(function(){
         });
     });
 
+    $('#start').click(function(){
+        $('#this').attr('disabled', 'disabled')
+        buttons_enable()
+        $.ajax({
+            url: '',
+            type: 'post',
+            data: {
+                action: 'start',
+                csrfmiddlewaretoken: csrf
+            }
+        });
+    });
+
     $('#stop').click(function(){
         $('#start').removeAttr('disabled');
         $.ajax({
@@ -102,6 +115,18 @@ $(document).ready(function(){
             type: 'get',
             data: {
                 button_text: 'stop'
+            }
+        });
+    });
+
+    $('#stop').click(function(){
+        $('#start').removeAttr('disabled');
+        $.ajax({
+            url: '',
+            type: 'post',
+            data: {
+                action: 'stop',
+                csrfmiddlewaretoken: csrf
             }
         });
     });
@@ -118,13 +143,182 @@ $(document).ready(function(){
         });
     });
 
+    $('#plan').click(function(){
+        $.ajax({
+            url: '',
+            type: 'post',
+            data: {
+                action: 'start plan counter',
+                action1: 'stop plan counter',
+                csrfmiddlewaretoken: csrf
+            }
+        });
+    });
+
+    $('#setup').click(function(){
+        buttons_disable();
+        $('#setup').removeAttr('disabled');
+        $.ajax({
+            url: '',
+            type: 'get',
+            data: {
+                new_button_text: new Date().toLocaleDateString('en-US', options)
+            }
+        });
+    });
+
     $('#setup').click(function(){
         $.ajax({
             url: '',
             type: 'post',
             data: {
-                action: 'some action',
-                // csrfmiddlewaretoken: csrf
+                action: 'start setup counter',
+                action1: 'stop setup counter',
+                csrfmiddlewaretoken: csrf
+            }
+        });
+    });
+
+    $('#auto_serv').click(function(){
+        buttons_disable();
+        $('#auto_serv').removeAttr('disabled');
+        $.ajax({
+            url: '',
+            type: 'get',
+            data: {
+                new_button_text: new Date().toLocaleDateString('en-US', options)
+            }
+        });
+    });
+
+    $('#auto_serv').click(function(){
+        $.ajax({
+            url: '',
+            type: 'post',
+            data: {
+                action: 'start auto_serv counter',
+                action1: 'stop auto_serv counter',
+                csrfmiddlewaretoken: csrf
+            }
+        });
+    });
+
+    $('#ppr').click(function(){
+        buttons_disable();
+        $('#ppr').removeAttr('disabled');
+        $.ajax({
+            url: '',
+            type: 'get',
+            data: {
+                new_button_text: new Date().toLocaleDateString('en-US', options)
+            }
+        });
+    });
+
+    $('#ppr').click(function(){
+        $.ajax({
+            url: '',
+            type: 'post',
+            data: {
+                action: 'start ppr counter',
+                action1: 'stop ppr counter',
+                csrfmiddlewaretoken: csrf
+            }
+        });
+    });
+
+    $('#breaking').click(function(){
+        buttons_disable();
+        $('#breaking').removeAttr('disabled');
+        $.ajax({
+            url: '',
+            type: 'get',
+            data: {
+                new_button_text: new Date().toLocaleDateString('en-US', options)
+            }
+        });
+    });
+
+    $('#breaking').click(function(){
+        $.ajax({
+            url: '',
+            type: 'post',
+            data: {
+                action: 'start breaking counter',
+                action1: 'stop breaking counter',
+                csrfmiddlewaretoken: csrf
+            }
+        });
+    });
+
+    $('#material').click(function(){
+        buttons_disable();
+        $('#material').removeAttr('disabled');
+        $.ajax({
+            url: '',
+            type: 'get',
+            data: {
+                new_button_text: new Date().toLocaleDateString('en-US', options)
+            }
+        });
+    });
+
+    $('#material').click(function(){
+        $.ajax({
+            url: '',
+            type: 'post',
+            data: {
+                action: 'start material counter',
+                action1: 'stop material counter',
+                csrfmiddlewaretoken: csrf
+            }
+        });
+    });
+
+    $('#task').click(function(){
+        buttons_disable();
+        $('#task').removeAttr('disabled');
+        $.ajax({
+            url: '',
+            type: 'get',
+            data: {
+                new_button_text: new Date().toLocaleDateString('en-US', options)
+            }
+        });
+    });
+
+    $('#task').click(function(){
+        $.ajax({
+            url: '',
+            type: 'post',
+            data: {
+                action: 'start task counter',
+                action1: 'stop task counter',
+                csrfmiddlewaretoken: csrf
+            }
+        });
+    });
+
+    $('#model').click(function(){
+        buttons_disable();
+        $('#model').removeAttr('disabled');
+        $.ajax({
+            url: '',
+            type: 'get',
+            data: {
+                new_button_text: new Date().toLocaleDateString('en-US', options)
+            }
+        });
+    });
+
+    $('#model').click(function(){
+        $.ajax({
+            url: '',
+            type: 'post',
+            data: {
+                action: 'start model counter',
+                action1: 'stop model counter',
+                csrfmiddlewaretoken: csrf
             }
         });
     });
